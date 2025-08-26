@@ -5,6 +5,7 @@
 #include "ddcci.h"
 #include "json.h"
 #include "json_fwd.h"
+#include "resource.h"
 
 #define WM_TRAYICON (WM_USER + 1)
 #define ID_TRAY_EXIT  1001
@@ -94,7 +95,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
     nid.uID = 1;
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_TRAYICON;
-    nid.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    nid.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
     wcscpy_s(nid.szTip, L"DDC/CI Tray App");
     Shell_NotifyIcon(NIM_ADD, &nid);
 
