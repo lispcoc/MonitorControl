@@ -1,0 +1,13 @@
+{
+  "id": "\\\\.\\DISPLAY1",
+  "ports": [
+    {
+      "name": "HDMI",
+      "code": 15
+    },
+    {
+      "name": "DP",
+      "code": 15
+    }
+  ]
+}
