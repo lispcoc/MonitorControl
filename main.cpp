@@ -19,18 +19,12 @@ nlohmann::json config;
 nlohmann::json ReadJsonFile(const std::string& filename) {
     std::ifstream ifs(filename);
     if (!ifs.is_open()) {
-        // ファイルが開けなかった場合は空のjsonを返す
         return nlohmann::json();
     }
     nlohmann::json j;
     ifs >> j;
     return j;
 }
-
-class Port {
-public:
-    std::string name;
-};
 
 static std::wstring ConvertUTF8ToWstring(const std::string& src)
 {
@@ -39,14 +33,13 @@ static std::wstring ConvertUTF8ToWstring(const std::string& src)
 }
 
 void ShowTrayMenu(HWND hwnd) {
-    config = ReadJsonFile("config.json"); // JSONファイルを読むだけの例
+    config = ReadJsonFile("config.json");
     std::string id;
 	config.at("id").get_to(id);
 
     POINT pt;
     GetCursorPos(&pt);
     HMENU hMenu = CreatePopupMenu();
-    InsertMenu(hMenu, -1, MF_BYPOSITION, ID_TRAY_SEND_DDC, L"Send DDC/CI Command");
 	size_t i = 0;
     std::vector<size_t> codes;
     for (auto p : config.at("ports")) {
@@ -64,7 +57,7 @@ void ShowTrayMenu(HWND hwnd) {
     int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_BOTTOMALIGN, pt.x, pt.y, 0, hwnd, NULL);
 
     if (cmd >= ID_TRAY_SEND_DDC && cmd < (ID_TRAY_SEND_DDC + codes.size())) {
-        SendDDCCommand(ConvertUTF8ToWstring(id), codes[i]);
+        SendDDCCommand(ConvertUTF8ToWstring(id), codes[cmd - ID_TRAY_SEND_DDC]);
     }
     else if (cmd == ID_TRAY_EXIT) {
         Shell_NotifyIcon(NIM_DELETE, &nid);
