@@ -8,7 +8,8 @@
 #include "resource.h"
 
 #define WM_TRAYICON (WM_USER + 1)
-#define ID_TRAY_EXIT  1001
+#define ID_TRAY_KEY       1000
+#define ID_TRAY_EXIT      1001
 #define ID_TRAY_SEND_DDC  1002
 
 HINSTANCE hInst;
@@ -33,6 +34,17 @@ static std::wstring ConvertUTF8ToWstring(const std::string& src)
     return converter.from_bytes(src);
 }
 
+void SendGlobalKey(WORD keyCode) {
+    INPUT input = {};
+    input.type = INPUT_KEYBOARD;
+    input.ki.wVk = keyCode;
+
+    SendInput(1, &input, sizeof(INPUT));
+
+    input.ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(1, &input, sizeof(INPUT));
+}
+
 void ShowTrayMenu(HWND hwnd) {
     config = ReadJsonFile("config.json");
     std::string id;
@@ -52,6 +64,7 @@ void ShowTrayMenu(HWND hwnd) {
         codes.push_back(code);
         ++i;
 	}
+    InsertMenu(hMenu, -1, MF_BYPOSITION, ID_TRAY_KEY, L"ScrLock");
     InsertMenu(hMenu, -1, MF_BYPOSITION, ID_TRAY_EXIT, L"Exit");
 
     SetForegroundWindow(hwnd);
@@ -59,6 +72,10 @@ void ShowTrayMenu(HWND hwnd) {
 
     if (cmd >= ID_TRAY_SEND_DDC && cmd < (ID_TRAY_SEND_DDC + codes.size())) {
         SendDDCCommand(ConvertUTF8ToWstring(id), codes[cmd - ID_TRAY_SEND_DDC]);
+    }
+    else if (cmd == ID_TRAY_KEY) {
+        SendGlobalKey(VK_SCROLL);
+        SendGlobalKey(VK_SCROLL);
     }
     else if (cmd == ID_TRAY_EXIT) {
         Shell_NotifyIcon(NIM_DELETE, &nid);
