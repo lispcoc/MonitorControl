@@ -1,5 +1,5 @@
 {
-  "id": "\\\\.\\DISPLAY1",
+  "zindex": 1,
   "ports": [
     { "name": "HDMI", "code": 17 },
     { "name": "DP", "code": 15 }

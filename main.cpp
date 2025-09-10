@@ -47,8 +47,8 @@ void SendGlobalKey(WORD keyCode) {
 
 void ShowTrayMenu(HWND hwnd) {
     config = ReadJsonFile("config.json");
-    std::string id;
-	config.at("id").get_to(id);
+    ULONG id;
+	config.at("zindex").get_to(id);
 
     POINT pt;
     GetCursorPos(&pt);
@@ -71,7 +71,7 @@ void ShowTrayMenu(HWND hwnd) {
     int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_BOTTOMALIGN, pt.x, pt.y, 0, hwnd, NULL);
 
     if (cmd >= ID_TRAY_SEND_DDC && cmd < (ID_TRAY_SEND_DDC + codes.size())) {
-        SendDDCCommand(ConvertUTF8ToWstring(id), codes[cmd - ID_TRAY_SEND_DDC]);
+        SendDDCCommand(id, codes[cmd - ID_TRAY_SEND_DDC]);
     }
     else if (cmd == ID_TRAY_KEY) {
         SendGlobalKey(VK_SCROLL);
