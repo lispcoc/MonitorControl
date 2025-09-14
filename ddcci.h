@@ -1,14 +1,14 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <highlevelmonitorconfigurationapi.h>
 #include <lowlevelmonitorconfigurationapi.h>
 
-struct MonitorInfo {
+typedef struct _MonitorInfo {
     HMONITOR hMonitor;
     RECT rcMonitor;
     std::wstring deviceName;
-};
+} MonitorInfo;
 
-#pragma once
-void SendDDCCommand(ULONG id, const size_t code);
+void SendDDCCommand(const WCHAR* name, const DWORD code);
 std::vector<MonitorInfo> GetActiveMonitors();

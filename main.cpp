@@ -47,20 +47,20 @@ void SendGlobalKey(WORD keyCode) {
 
 void ShowTrayMenu(HWND hwnd) {
     config = ReadJsonFile("config.json");
-    ULONG id;
-	config.at("zindex").get_to(id);
+    std::string name;
+	config.at("name").get_to(name);
 
     POINT pt;
     GetCursorPos(&pt);
     HMENU hMenu = CreatePopupMenu();
 	size_t i = 0;
-    std::vector<size_t> codes;
+    std::vector<DWORD> codes;
     for (auto p : config.at("ports")) {
-        std::string name;
-        size_t code;
-        p.at("name").get_to(name);
+        std::string port_name;
+        DWORD code;
+        p.at("name").get_to(port_name);
         p.at("code").get_to(code);
-        InsertMenu(hMenu, -1, MF_BYPOSITION, ID_TRAY_SEND_DDC + i, ConvertUTF8ToWstring(name).c_str());
+        InsertMenu(hMenu, -1, MF_BYPOSITION, ID_TRAY_SEND_DDC + i, ConvertUTF8ToWstring(port_name).c_str());
         codes.push_back(code);
         ++i;
 	}
@@ -71,7 +71,7 @@ void ShowTrayMenu(HWND hwnd) {
     int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_BOTTOMALIGN, pt.x, pt.y, 0, hwnd, NULL);
 
     if (cmd >= ID_TRAY_SEND_DDC && cmd < (ID_TRAY_SEND_DDC + codes.size())) {
-        SendDDCCommand(id, codes[cmd - ID_TRAY_SEND_DDC]);
+        SendDDCCommand(ConvertUTF8ToWstring(name).c_str(), codes[cmd - ID_TRAY_SEND_DDC]);
     }
     else if (cmd == ID_TRAY_KEY) {
         SendGlobalKey(VK_SCROLL);

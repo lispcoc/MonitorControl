@@ -1,5 +1,5 @@
 {
-  "zindex": 1,
+  "name": "HP P244",
   "ports": [
     { "name": "HDMI", "code": 17 },
     { "name": "DP", "code": 15 }
